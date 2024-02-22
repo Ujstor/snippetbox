@@ -1,9 +1,10 @@
-package main 
+package tests
 
 import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"github.com/ujstor/snippetbox/internal/server"
 )
 
 func TestHomeHandler(t *testing.T) {
@@ -15,7 +16,7 @@ func TestHomeHandler(t *testing.T) {
 
 	// We create a ResponseRecorder 
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(Home)
+	handler := http.HandlerFunc(server.Home)
 
 	// Serve the HTTP request to the recorder
 	handler.ServeHTTP(rr, req)
