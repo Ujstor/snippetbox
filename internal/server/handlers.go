@@ -14,9 +14,9 @@ type Application struct {
 }
 
 // Handler
-func(app *Application) Home(w http.ResponseWriter, r *http.Request) {
+func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		app.notFound(w)
+		app.NotFound(w)
 		return
 	}
 
@@ -25,34 +25,34 @@ func(app *Application) Home(w http.ResponseWriter, r *http.Request) {
 		"./ui/html/partials/nav.tmpl",
 		"./ui/html/pages/home.tmpl",
 	}
-	
+
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		app.serverError(w, err)
+		app.ServerError(w, err)
 		return
 	}
 
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		app.serverError(w, err)
+		app.ServerError(w, err)
 	}
 }
 
-func(app *Application) SnippetView(w http.ResponseWriter, r *http.Request) {
+func (app *Application) SnippetView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 
 	if err != nil || id < 1 {
-		app.notFound(w)
+		app.NotFound(w)
 		return
 	}
 
 	fmt.Fprintf(w, "Specific snippet with id: %d", id)
 }
 
-func(app *Application) SnippetCreate(w http.ResponseWriter, r *http.Request) {
+func (app *Application) SnippetCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
-		app.clientError(w, http.StatusMethodNotAllowed)
+		app.ClientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 	w.Write([]byte("Create Snippet"))
