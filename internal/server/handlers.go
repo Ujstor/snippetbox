@@ -6,11 +6,14 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/ujstor/snippetbox/internal/models"
 )
 
 type Application struct {
 	ErrorLog *log.Logger
 	InfoLog  *log.Logger
+	Snippets *models.SnippetModel
 }
 
 // Handler
@@ -55,5 +58,15 @@ func (app *Application) SnippetCreate(w http.ResponseWriter, r *http.Request) {
 		app.ClientError(w, http.StatusMethodNotAllowed)
 		return
 	}
-	w.Write([]byte("Create Snippet"))
+	title := "O snail"
+	content := "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n– Kobayashi Issa"
+	expires := 7
+
+	id, err := app.Snippets.Insert(title, content, expires)
+	if err != nil {
+		app.ServerError(w, err)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/snippet/view?id=%d", id), http.StatusSeeOther)
 }

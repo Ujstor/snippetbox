@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/ujstor/snippetbox/internal/server"
+	"github.com/ujstor/snippetbox/internal/models"
 	"github.com/pressly/goose/v3"	
 
 	_ "github.com/go-sql-driver/mysql"
@@ -51,9 +52,10 @@ func main() {
 	app := &server.Application{
 		ErrorLog: errorLog,
 		InfoLog:  infoLog,
+		Snippets: &models.SnippetModel{DB: db},
 	}
 
-	srv := &http.Server{
+	srv := &http.Server{ 
 		Addr:     *addr,
 		ErrorLog: errorLog,
 		Handler:  app.Routes(),
