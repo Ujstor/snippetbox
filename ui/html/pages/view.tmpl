@@ -3,15 +3,16 @@
 {{end}}
 
 {{define "main"}}
-    <div class='snippet'>
-        <div class='metadata'>
-            <strong>{{.Snippet.Title}}</strong>
-            <span>#{{.Snippet.ID}}</span>
+    <div class='snippet bg-white rounded-lg shadow-md p-6 mb-4'>
+        <div class='metadata mb-4'>
+            <strong class="text-lg">{{.Snippet.Title}}</strong>
+            <span class="text-gray-500">#{{.Snippet.ID}}</span>
         </div>
-        <pre><code>{{.Snippet.Content}}</code></pre>
-        <div class='metadata'>
-            <time>Created: {{.Snippet.CreatedAt}}</time>
-            <time>Expires: {{.Snippet.Expires}}</time>
+        <pre class="bg-gray-100 p-4 rounded"><code>{{.Snippet.Content}}</code></pre>
+        <div class='metadata mt-4 text-gray-600'>
+            <time class="block">Created: {{.Snippet.CreatedAt}}</time>
+            <time class="block">Expires: {{.Snippet.Expires}}</time>
         </div>
     </div>
 {{end}}
+

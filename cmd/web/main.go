@@ -2,26 +2,34 @@ package main
 
 import (
 	"database/sql"
-	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/joho/godotenv/autoload"
 	"github.com/ujstor/snippetbox/internal/models"
 	"github.com/ujstor/snippetbox/internal/server"
 )
 
-func main() {
-	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn := flag.String("dns", "ujstor:password1234@tcp(localhost)/snippetbox?parseTime=true", "MySql data source name")
+var (
+	dbname   = os.Getenv("BLUEPRINT_DB_DATABASE")
+	password = os.Getenv("BLUEPRINT_DB_PASSWORD")
+	username = os.Getenv("BLUEPRINT_DB_USERNAME")
+	db_port  = os.Getenv("BLUEPRINT_DB_PORT")
+	host     = os.Getenv("BLUEPRINT_DB_HOST")
+	port     = os.Getenv("PORT")
+)
 
-	flag.Parse()
+func main() {
+	addr := fmt.Sprintf(":%s", port)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", username, password, host, db_port, dbname)
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	db, err := openDB(*dsn)
+	db, err := openDB(dsn)
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -39,12 +47,12 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:     *addr,
+		Addr:     addr,
 		ErrorLog: errorLog,
 		Handler:  app.Routes(),
 	}
 
-	infoLog.Printf("Starting server on port %s", *addr)
+	infoLog.Printf("Starting server on port %s", addr)
 
 	err = srv.ListenAndServe()
 	if err != nil {
@@ -64,3 +72,4 @@ func openDB(dsn string) (*sql.DB, error) {
 
 	return db, nil
 }
+
