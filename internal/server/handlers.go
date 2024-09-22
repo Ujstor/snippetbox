@@ -24,16 +24,16 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	snippets, err := app.Snippets.Latest()
-	if err != nil {
-		app.ServerError(w, err)
-		return
-	}
-
-	for _, snippet := range snippets {
-		fmt.Fprintf(w, "%+v\n", snippet)
-	}
-
+	// snippets, err := app.Snippets.Latest()
+	// if err != nil {
+	// 	app.ServerError(w, err)
+	// 	return
+	// }
+	//
+	// for _, snippet := range snippets {
+	// 	fmt.Fprintf(w, "%+v\n", snippet)
+	// }
+	//
 	files := []string{
 		"./ui/html/base.tmpl",
 		"./ui/html/partials/nav.tmpl",

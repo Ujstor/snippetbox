@@ -2,26 +2,19 @@ package main
 
 import (
 	"database/sql"
-	"embed"
 	"flag"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/ujstor/snippetbox/internal/server"
-	"github.com/ujstor/snippetbox/internal/models"
-	"github.com/pressly/goose/v3"	
-
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/ujstor/snippetbox/internal/models"
+	"github.com/ujstor/snippetbox/internal/server"
 )
-
-
-//go:embed migrations/*.sql
-var embedMigrations embed.FS
 
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn := flag.String("dns", "ujstor:password1234@tcp(localhost)/snippetbox?parseTime=true", "MySql data source name" )
+	dsn := flag.String("dns", "ujstor:password1234@tcp(localhost)/snippetbox?parseTime=true", "MySql data source name")
 
 	flag.Parse()
 
@@ -35,19 +28,9 @@ func main() {
 
 	defer db.Close()
 
-
-	goose.SetBaseFS(embedMigrations)
-
-	if err := goose.SetDialect("mysql"); err != nil {
-        panic(err)
-    }
-	if err := goose.Up(db, "migrations"); err != nil {
-		log.Fatalf("goose: failed goose up migration: %v", err)
+	if err := models.DBMigrations(db); err != nil {
+		errorLog.Fatal(err)
 	}
-	if err := goose.Status(db, "migrations"); err != nil {
-		log.Fatalf("goose: failed goose status: %v", err)
-	}
-
 
 	app := &server.Application{
 		ErrorLog: errorLog,
@@ -55,7 +38,7 @@ func main() {
 		Snippets: &models.SnippetModel{DB: db},
 	}
 
-	srv := &http.Server{ 
+	srv := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errorLog,
 		Handler:  app.Routes(),

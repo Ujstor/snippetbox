@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  mysql:
+  mysql_app:
     image: mysql:latest
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -11,7 +11,7 @@ services:
     ports:
       - "${DB_PORT}:3306"
     volumes:
-      - mysql_volume:/var/lib/mysql
+      - mysql_volume_app:/var/lib/mysql
 
 volumes:
-  mysql_volume:
+  mysql_volume_app:
